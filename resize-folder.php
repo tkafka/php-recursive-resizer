@@ -1,69 +1,75 @@
 <?php
-class IgnorantRecursiveDirectoryIterator extends RecursiveDirectoryIterator {
-    function getChildren() {
+
+class IgnorantRecursiveDirectoryIterator extends RecursiveDirectoryIterator
+{
+    function getChildren()
+    {
         try {
             return new IgnorantRecursiveDirectoryIterator($this->getPathname());
-        } catch(UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             return new RecursiveArrayIterator(array());
         }
     }
 }
 
-function mkDirIfNotExists($path) {
-	if (file_exists($path))
-		return true;
-	else
-		return mkdir($path, 0777, true);
+function mkDirIfNotExists($path)
+{
+    if (file_exists($path))
+        return true;
+    else
+        return mkdir($path, 0777, true);
 }
 
-function loadMtimes($file) {
-	$mtimes = array();
-	$mtimesFilePath = $file;
-	if (file_exists($mtimesFilePath)) {
-		$tmp = file($mtimesFilePath);
-		foreach($tmp as $line) {
-			$parts = explode(':', $line);
-			if (count($parts) == 2) {
-				$mtimes[$parts[0]] = $parts[1];
-			}
-		}
-	}
-	return $mtimes;
+function loadMtimes($file)
+{
+    $mtimes = array();
+    $mtimesFilePath = $file;
+    if (file_exists($mtimesFilePath)) {
+        $tmp = file($mtimesFilePath);
+        foreach ($tmp as $line) {
+            $parts = explode(':', str_replace("\n", '', $line));
+            if (count($parts) == 2) {
+                $mtimes[$parts[0]] = $parts[1];
+            }
+        }
+    }
+    return $mtimes;
 }
 
-function saveMtimes($mtimesFilePath, $mtimes) {
-$str = '';
-foreach($mtimes as $file => $mtime) {
-	$str .= "$file:$mtime\n";
-}
-file_put_contents($mtimesFilePath, $str);
+function saveMtimes($mtimesFilePath, $mtimes)
+{
+    $str = '';
+    foreach ($mtimes as $file => $mtime) {
+        $str .= "$file:$mtime\n";
+    }
+    file_put_contents($mtimesFilePath, $str);
 
 }
 
 
-if (count($argv)<3) {
-	echo "Usage: php resize-folder.php <inputFolder> <ouputFolder> [size]";
+if (count($argv) < 3) {
+    echo "Usage: php resize-folder.php <inputFolder> <ouputFolder> [size]";
 }
 $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
-$size = count($argv)>=4 ? $argv[3] : '1280x1280>';
+$size = count($argv) >= 4 ? $argv[3] : '1280x1280>';
 
 if ($inputDirectory == $outputDirectory) {
-	echo "You are copying folder to iteslf -> loss of data!";
-	exit(1);
+    echo "You are copying folder to iteslf -> loss of data!";
+    exit(1);
 }
 
 
 $inputDirectoryReal = realpath($inputDirectory);
 if (!mkDirIfNotExists($outputDirectory)) {
-	echo "Couldn't create folder $outputDirectory, exiting.";
-	exit(1);
+    echo "Couldn't create folder $outputDirectory, exiting.";
+    exit(1);
 }
 $outputDirectoryReal = realpath($outputDirectory);
 
 if ($inputDirectoryReal == $outputDirectoryReal) {
-	echo "You are copying folder to iteslf -> loss of data!";
-	ecit(1);
+    echo "You are copying folder to iteslf -> loss of data!";
+    ecit(1);
 }
 
 
@@ -80,26 +86,26 @@ $Iterator = new RecursiveIteratorIterator($Directory);
 $Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png)$/i', RecursiveRegexIterator::GET_MATCH);
 
 $counter = 0;
-foreach($Regex as $pathFilename1 => $value) {
-	$path1 = dirname($pathFilename1);
-	$path2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $path1);
-	$pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
-	$pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
-	
-	$mtime = filemtime($pathFilename1);
-	if (isset($mtimes[$pathPlain]) && $mtime == $mtimes[$pathPlain]) {
-		echo "x";
-		continue;
-	} else {
-		$mtimes[$pathPlain] = $mtime;
-	}
-	
-	if (mkDirIfNotExists($path2)) {
-		$commandLineArray = array(
+foreach ($Regex as $pathFilename1 => $value) {
+    $path1 = dirname($pathFilename1);
+    $path2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $path1);
+    $pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
+    $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
+
+    $mtime = filemtime($pathFilename1);
+    if (isset($mtimes[$pathPlain]) && $mtime == $mtimes[$pathPlain]) {
+        echo "x";
+        continue;
+    } else {
+        $mtimes[$pathPlain] = $mtime;
+    }
+
+    if (mkDirIfNotExists($path2)) {
+        $commandLineArray = array(
             'convert',
             '"' . $pathFilename1 . '"',
             '-resize ' . escapeshellarg($size),
-			'-auto-orient',
+            '-auto-orient',
             // '-unsharp 0x6+0.5+0',
             '"' . $pathFilename2 . '"'
         );
@@ -113,14 +119,14 @@ foreach($Regex as $pathFilename1 => $value) {
         if (count($output)) {
             echo "\n" . implode("\n", $output) . "\n";
         }
-	} else {
-		echo "Couldn't create folder $path2.";
-	}
-	
-	if ($counter++ % 10 == 0) {
-		saveMtimes($mtimesFilePath, $mtimes);
-		echo "s";
-	}
+    } else {
+        echo "Couldn't create folder $path2.";
+    }
+
+    if ($counter++ % 10 == 0) {
+        saveMtimes($mtimesFilePath, $mtimes);
+        echo "s";
+    }
 }
 
 // save
