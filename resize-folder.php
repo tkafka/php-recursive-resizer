@@ -31,7 +31,7 @@ function loadMtimes($file) {
 	return $mtimes;
 }
 
-function saveMtimes($file, $mtimes) {
+function saveMtimes($mtimesFilePath, $mtimes) {
 $str = '';
 foreach($mtimes as $file => $mtime) {
 	$str .= "$file:$mtime\n";
@@ -50,7 +50,7 @@ $size = count($argv)>=4 ? $argv[3] : '1280x1280>';
 
 if ($inputDirectory == $outputDirectory) {
 	echo "You are copying folder to iteslf -> loss of data!";
-	ecit(1);
+	exit(1);
 }
 
 
