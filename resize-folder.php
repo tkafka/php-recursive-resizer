@@ -20,6 +20,16 @@ function mkDirIfNotExists($path)
         return mkdir($path, 0777, true);
 }
 
+function stringContainsStr($haystack, $needlesArray) {
+    $contain = false;
+    for ($i=0; $i<count($needlesArray); $i++) {
+        if(strpos($haystack, $needlesArray[$i]) !== false) {
+            $contain = true;
+        }
+    }
+    return $contain;
+}
+
 function loadMtimes($file)
 {
     $mtimes = array();
@@ -53,6 +63,7 @@ if (count($argv) < 3) {
 $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
 $size = count($argv) >= 4 ? $argv[3] : '1280x1280>';
+$excludePatterns = array('.picasaoriginals', '.SyncArchive');
 
 if ($inputDirectory == $outputDirectory) {
     echo "You are copying folder to iteslf -> loss of data!";
@@ -91,6 +102,11 @@ foreach ($Regex as $pathFilename1 => $value) {
     $path2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $path1);
     $pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
     $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
+
+    if (stringContainsStr($pathPlain, $excludePatterns)) {
+        echo 'ø';
+        continue;
+    }
 
     $mtime = filemtime($pathFilename1);
     if (isset($mtimes[$pathPlain]) && $mtime == $mtimes[$pathPlain]) {
