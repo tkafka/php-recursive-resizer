@@ -109,7 +109,7 @@ foreach ($Regex as $pathFilename1 => $value) {
     }
 
     $mtime = filemtime($pathFilename1);
-    if (isset($mtimes[$pathPlain]) && $mtime == $mtimes[$pathPlain]) {
+    if (isset($mtimes[$pathPlain]) && $mtime == $mtimes[$pathPlain] && !file_exists($pathFilename2)) {
         echo "x";
         continue;
     } else {
