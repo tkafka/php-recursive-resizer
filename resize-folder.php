@@ -139,7 +139,7 @@ foreach ($Regex as $pathFilename1 => $value) {
         echo "Couldn't create folder $path2.";
     }
 
-    if ($counter++ % 10 == 0) {
+    if ($counter++ % 4 == 0) {
         saveMtimes($mtimesFilePath, $mtimes);
         echo "s";
     }
