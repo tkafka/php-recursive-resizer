@@ -16,6 +16,31 @@ function mkDirIfNotExists($path) {
 		return mkdir($path, 0777, true);
 }
 
+function loadMtimes($file) {
+	$mtimes = array();
+	$mtimesFilePath = $file;
+	if (file_exists($mtimesFilePath)) {
+		$tmp = file($mtimesFilePath);
+		foreach($tmp as $line) {
+			$parts = explode(':', $line);
+			if (count($parts) == 2) {
+				$mtimes[$parts[0]] = $parts[1];
+			}
+		}
+	}
+	return $mtimes;
+}
+
+function saveMtimes($file, $mtimes) {
+$str = '';
+foreach($mtimes as $file => $mtime) {
+	$str .= "$file:$mtime\n";
+}
+file_put_contents($mtimesFilePath, $str);
+
+}
+
+
 if (count($argv)<3) {
 	echo "Usage: php resize-folder.php <inputFolder> <ouputFolder> [size]";
 }
@@ -42,17 +67,8 @@ if ($inputDirectoryReal == $outputDirectoryReal) {
 }
 
 
-$mtimes = array();
 $mtimesFilePath = $inputDirectoryReal . '/.mtimes';
-if (file_exists($mtimesFilePath)) {
-	$tmp = file($mtimesFilePath);
-	foreach($tmp as $line) {
-		$parts = explode(':', $line);
-		if (count($parts) == 2) {
-			$mtimes[$parts[0]] = $parts[1];
-		}
-	}
-}
+$mtimes = loadMtimes(mtimesFilePath);
 
 echo "input: $inputDirectoryReal\n";
 echo "output: $outputDirectoryReal\n";
@@ -63,6 +79,7 @@ $Directory = new IgnorantRecursiveDirectoryIterator($inputDirectoryReal);
 $Iterator = new RecursiveIteratorIterator($Directory);
 $Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png)$/i', RecursiveRegexIterator::GET_MATCH);
 
+$counter = 0;
 foreach($Regex as $pathFilename1 => $value) {
 	$path1 = dirname($pathFilename1);
 	$path2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $path1);
@@ -99,12 +116,12 @@ foreach($Regex as $pathFilename1 => $value) {
 	} else {
 		echo "Couldn't create folder $path2.";
 	}
+	
+	if ($counter++ % 10 == 0) {
+		saveMtimes($mtimesFilePath, $mtimes);
+		echo "s";
+	}
 }
 
 // save
-$str = '';
-foreach($mtimes as $file => $mtime) {
-	$str .= "$file:$mtime\n";
-}
-file_put_contents($mtimesFilePath, $str);
-
+saveMtimes($mtimesFilePath, $mtimes);
