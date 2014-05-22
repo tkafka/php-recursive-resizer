@@ -104,7 +104,7 @@ foreach ($Regex as $pathFilename1 => $value) {
     $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
 
     if (stringContainsStr($pathPlain, $excludePatterns)) {
-        echo 'ø';
+        echo '*';
         continue;
     }
 
