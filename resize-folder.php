@@ -68,7 +68,7 @@ if ($inputDirectoryReal == $outputDirectoryReal) {
 
 
 $mtimesFilePath = $inputDirectoryReal . '/.mtimes';
-$mtimes = loadMtimes(mtimesFilePath);
+$mtimes = loadMtimes($mtimesFilePath);
 
 echo "input: $inputDirectoryReal\n";
 echo "output: $outputDirectoryReal\n";
