@@ -64,6 +64,7 @@ $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
 $size = count($argv) >= 4 ? $argv[3] : '1280x1280>';
 $excludePatterns = array('.picasaoriginals', '.SyncArchive');
+$copyPatterns = array('.picasa.ini');
 
 if ($inputDirectory == $outputDirectory) {
     echo "You are copying folder to iteslf -> loss of data!";
@@ -94,7 +95,7 @@ echo "\n";
 
 $Directory = new IgnorantRecursiveDirectoryIterator($inputDirectoryReal);
 $Iterator = new RecursiveIteratorIterator($Directory);
-$Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png)$/i', RecursiveRegexIterator::GET_MATCH);
+$Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png|ini)$/i', RecursiveRegexIterator::GET_MATCH);
 
 $counter = 0;
 foreach ($Regex as $pathFilename1 => $value) {
@@ -105,6 +106,19 @@ foreach ($Regex as $pathFilename1 => $value) {
 
     if (stringContainsStr($pathPlain, $excludePatterns)) {
         echo '*';
+        continue;
+    }
+
+    if (stringContainsStr($pathPlain, $copyPatterns)) {
+        copy($pathFilename1, $pathFilename2);
+        echo "c";
+        continue;
+    }
+
+    $ext = pathinfo($pathFilename1, PATHINFO_EXTENSION);
+    if (strtolower($ext) != 'jpg'
+        && strtolower($ext) != 'png') {
+        echo "-";
         continue;
     }
 
