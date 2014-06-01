@@ -62,12 +62,12 @@ if (count($argv) < 3) {
 }
 $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
-$size = count($argv) >= 4 ? $argv[3] : '1280x1280>';
+$size = count($argv) >= 4 ? $argv[3] : '2048x2048>';
 $excludePatterns = array('.picasaoriginals', '.SyncArchive');
-$copyPatterns = array('.picasa.ini');
+$copyPatterns = array('.picasa.ini', '.mov', '.MOV');
 
 if ($inputDirectory == $outputDirectory) {
-    echo "You are copying folder to iteslf -> loss of data!";
+    echo "You are copying folder to itself -> loss of data!";
     exit(1);
 }
 
@@ -80,7 +80,7 @@ if (!mkDirIfNotExists($outputDirectory)) {
 $outputDirectoryReal = realpath($outputDirectory);
 
 if ($inputDirectoryReal == $outputDirectoryReal) {
-    echo "You are copying folder to iteslf -> loss of data!";
+    echo "You are copying folder to itself -> loss of data!";
     ecit(1);
 }
 
