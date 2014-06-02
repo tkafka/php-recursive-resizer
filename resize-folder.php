@@ -103,10 +103,12 @@ foreach ($Regex as $pathFilename1 => $value) {
     $pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
     $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
 
+    /*
     echo "$pathFilename1\n";
     echo "$path1\n";
     echo "$pathFilename2\n";
     echo "$path2\n";
+    */
 
     if (stringContainsStr($pathPlain, $excludePatterns)) {
         echo '_';
