@@ -56,7 +56,6 @@ function saveMtimes($mtimesFilePath, $mtimes)
 
 }
 
-
 if (count($argv) < 3) {
     echo "Usage: php resize-folder.php <inputFolder> <ouputFolder> [size]";
 }
@@ -95,7 +94,7 @@ echo "\n";
 
 $Directory = new IgnorantRecursiveDirectoryIterator($inputDirectoryReal);
 $Iterator = new RecursiveIteratorIterator($Directory);
-$Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png|ini)$/i', RecursiveRegexIterator::GET_MATCH);
+$Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png|ini|MOV)$/i', RecursiveRegexIterator::GET_MATCH);
 
 $counter = 0;
 foreach ($Regex as $pathFilename1 => $value) {
@@ -104,8 +103,13 @@ foreach ($Regex as $pathFilename1 => $value) {
     $pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
     $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
 
+    echo "$pathFilename1\n";
+    echo "$path1\n";
+    echo "$pathFilename2\n";
+    echo "$path2\n";
+
     if (stringContainsStr($pathPlain, $excludePatterns)) {
-        echo '*';
+        echo '_';
         continue;
     }
 
