@@ -115,15 +115,11 @@ foreach ($Regex as $pathFilename1 => $value) {
         continue;
     }
 
-    if (stringContainsStr($pathPlain, $copyPatterns)) {
-        copy($pathFilename1, $pathFilename2);
-        echo "c";
-        continue;
-    }
-
     $ext = pathinfo($pathFilename1, PATHINFO_EXTENSION);
     if (strtolower($ext) != 'jpg'
-        && strtolower($ext) != 'png') {
+        && strtolower($ext) != 'png'
+        && strtolower($ext) != 'mov'
+        ) {
         echo "-";
         continue;
     }
@@ -134,6 +130,12 @@ foreach ($Regex as $pathFilename1 => $value) {
         continue;
     } else {
         $mtimes[$pathPlain] = $mtime;
+    }
+
+    if (stringContainsStr($pathPlain, $copyPatterns)) {
+        copy($pathFilename1, $pathFilename2);
+        echo "c";
+        continue;
     }
 
     if (mkDirIfNotExists($path2)) {
