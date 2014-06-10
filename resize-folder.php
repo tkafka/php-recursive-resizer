@@ -118,6 +118,7 @@ foreach ($Regex as $pathFilename1 => $value) {
     $ext = pathinfo($pathFilename1, PATHINFO_EXTENSION);
     if (strtolower($ext) != 'jpg'
         && strtolower($ext) != 'png'
+        && strtolower($ext) != 'ini'
         && strtolower($ext) != 'mov'
         ) {
         echo "-";
