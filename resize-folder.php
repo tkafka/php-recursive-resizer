@@ -63,7 +63,7 @@ $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
 $size = count($argv) >= 4 ? $argv[3] : '2048x2048>';
 $excludePatterns = array('.picasaoriginals', '.SyncArchive');
-$copyPatterns = array('.picasa.ini', '.mov', '.MOV');
+$copyPatterns = array('Picasa.ini', 'picasa.ini', '.picasa.ini', '.mov', '.MOV');
 
 if ($inputDirectory == $outputDirectory) {
     echo "You are copying folder to itself -> loss of data!";
