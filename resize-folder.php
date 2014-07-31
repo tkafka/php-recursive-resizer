@@ -62,7 +62,7 @@ if (count($argv) < 3) {
 $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
 $size = count($argv) >= 4 ? $argv[3] : '2048x2048>';
-$excludePatterns = array('.picasaoriginals', '.SyncArchive');
+$excludePatterns = array('.picasaoriginals', '.SyncArchive', 'iPod Photo Cache');
 $copyPatterns = array('Picasa.ini', 'picasa.ini', '.picasa.ini', '.mov', '.MOV');
 
 if ($inputDirectory == $outputDirectory) {
