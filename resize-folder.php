@@ -61,7 +61,7 @@ if (count($argv) < 3) {
 }
 $inputDirectory = $argv[1];
 $outputDirectory = $argv[2];
-$size = count($argv) >= 4 ? $argv[3] : '2048x2048>';
+$size = count($argv) >= 4 ? $argv[3] : '2560x2560>';
 $excludePatterns = array('.picasaoriginals', '.SyncArchive', 'iPod Photo Cache');
 $copyPatterns = array('Picasa.ini', 'picasa.ini', '.picasa.ini', '.mov', '.MOV');
 
@@ -80,7 +80,7 @@ $outputDirectoryReal = realpath($outputDirectory);
 
 if ($inputDirectoryReal == $outputDirectoryReal) {
     echo "You are copying folder to itself -> loss of data!";
-    ecit(1);
+    exit(1);
 }
 
 
@@ -96,12 +96,19 @@ $Directory = new IgnorantRecursiveDirectoryIterator($inputDirectoryReal);
 $Iterator = new RecursiveIteratorIterator($Directory);
 $Regex = new RegexIterator($Iterator, '/^.+\.(jpg|png|ini|MOV)$/i', RecursiveRegexIterator::GET_MATCH);
 
+$previousPath = null;
+
 $counter = 0;
 foreach ($Regex as $pathFilename1 => $value) {
     $path1 = dirname($pathFilename1);
     $path2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $path1);
     $pathFilename2 = str_replace($inputDirectoryReal, $outputDirectoryReal, $pathFilename1);
     $pathPlain = str_replace($inputDirectoryReal, '', $pathFilename1);
+
+    if ($previousPath != $path1) {
+			echo "\n$path1\n";
+			$previousPath = $path1;
+		}
 
     /*
     echo "$pathFilename1\n";
